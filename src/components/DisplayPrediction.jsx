@@ -1,33 +1,36 @@
 import * as React from "react";
 import firebase from "firebase"
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
+import Iframe from "react-iframe";
 
 const DisplayPrediction: React.Component = () => {
 
-    const [hasChangedMockup, setHasChangedMockup] = useState(false);
     const database = firebase.database().ref().child('hasChangedMockup');
 
     useEffect(() => {
         database.on(
             'value',
-            (snap) => {
-                setHasChangedMockup(snap.val())
+            (hasChangedHtmlDataSnap) => {
+                if (hasChangedHtmlDataSnap.val()) {
+                    database.set(false).then(
+                        document.getElementById(`predicationIframe`).src =
+                            document.getElementById('predicationIframe').src);
+                }
             }
         )
     });
 
-    const getPredictedPage = () => {
-        if (hasChangedMockup) {
-            console.log("has changed value");
-            database.set(false);
-        }
-        return '';
-    };
-
     return (
-        <>
-            {getPredictedPage()}
-        </>
+        <div>
+            <Iframe
+                url="http://localhost:5000/api/predict"
+                id={"predicationIframe"}
+                width={window.innerWidth - 4}
+                height={window.innerHeight - 4}
+                frameBorder={"0"}
+            />
+        </div>
+
     )
 };
 

@@ -32,7 +32,7 @@ const Login: React.Component = (props) => {
 
     return (
         <>
-            {isLoggedIn ? <p>Test {props.children}</p> : ''}
+            {isLoggedIn ? props.children : ''}
         </>
     )
 };
